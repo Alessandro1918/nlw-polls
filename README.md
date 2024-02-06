@@ -8,5 +8,6 @@ Aplicação desenvolvida durante a Next Level Week, realizada pela [@Rocketseat]
 - [Node.js](https://nodejs.org/en/)
 - [Prisma](https://www.prisma.io)
 - [PostgreSQL](https://www.postgresql.org)
+- [Docker](https://www.docker.com)
 
 Status: 🚧 Em construção 🚧

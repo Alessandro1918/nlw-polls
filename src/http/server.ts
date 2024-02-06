@@ -1,30 +1,22 @@
+import "dotenv/config"
 import fastify from "fastify"
-import { PrismaClient } from "@prisma/client"
-import { z } from "zod"
+import cookie from "@fastify/cookie"
+import { createPoll } from "./routes/createPoll"
+import { getPoll } from "./routes/getPoll"
+import { voteOnPoll } from "./routes/voteOnPoll"
 
-const PORT = 4000
+const PORT = Number(process.env.PORT) || 4000
 
 const app = fastify()
 
-const prisma = new PrismaClient()
-
-app.post("/polls", async (request, reply) => {
-  const reqBody = z.object({
-    title: z.string(),
-  })
-
-  const { title } = reqBody.parse(request.body)
-
-  const poll = await prisma.poll.create({
-    data: {
-      title,
-    }
-  })
-
-  return reply
-    .status(201)
-    .send({ pollId: poll.id })
+app.register(cookie, {
+  secret: process.env.COOKIE_SECRET,
+  hook: "onRequest"
 })
+
+app.register(createPoll)
+app.register(getPoll)
+app.register(voteOnPoll)
 
 app
   .listen({port: PORT})

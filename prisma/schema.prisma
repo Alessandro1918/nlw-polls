@@ -11,8 +11,35 @@ datasource db {
 }
 
 model Poll {
-  id        String   @id @default(uuid())
+  id        String       @id @default(uuid())
   title     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now())
+  // PollOption PollOption[] //Autocompleted
+  options   PollOption[] //Manually renamed relation
+  votes     Vote[]
+}
+
+//Relations: 1 poll, N options
+//At table of the "N" side of the relation (PollOption), write "poll Poll", and save it.
+//Everything else will be autocompleted by VSCode prisma extension.
+
+model PollOption {
+  id     String @id @default(uuid())
+  title  String
+  pollId String //Autocompleted
+  poll   Poll   @relation(fields: [pollId], references: [id]) //Autocompleted
+  votes  Vote[]
+}
+
+model Vote {
+  id           Int        @id @default(autoincrement())
+  sessionId    String
+  createdAt    DateTime   @default(now())
+  pollOptionId String
+  pollOption   PollOption @relation(fields: [pollOptionId], references: [id])
+  pollId       String
+  poll         Poll       @relation(fields: [pollId], references: [id])
+
+  @@unique([sessionId, pollId]) //SQL constraint: can't have two votes from same user to different polls
 }
