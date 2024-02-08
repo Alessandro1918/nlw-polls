@@ -4,8 +4,6 @@
 API para criar, votar e consultar enquetes. Rotas HTTP REST e Websockets.</br>
 Aplicação desenvolvida durante a Next Level Week, realizada pela [@Rocketseat](https://www.rocketseat.com.br) em fev/24.
 
-Status: 🚧 Em construção 🚧
-
 <p align="center">
   <img 
     width="70%" 
@@ -20,6 +18,10 @@ Status: 🚧 Em construção 🚧
 - [Docker](https://www.docker.com)
 - [PostgreSQL](https://www.postgresql.org)
 - [Redis](https://redis.io)
+- [WebSockets](https://developer.mozilla.org/pt-BR/docs/Web/API/WebSockets_API)
+
+## 🧊 Cool features:
+- Conexões Websocket que mostram os dados das enquetes em tempo real, sem necessidade de novas requisições HTTP.
 
 ## 🗂️ Utilização
 
@@ -42,7 +44,9 @@ Status: 🚧 Em construção 🚧
 
 ## Rotas HTTP
 
-### POST <code>/polls</code>
+baseURL: <code>localhost:4000</code>
+
+### POST <code>http://{baseURL}/polls</code>
 Cria uma nova enquete.
 
 #### Request body
@@ -60,12 +64,11 @@ Cria uma nova enquete.
 }
 ```
 
-### GET <code>/polls/:pollId</code>
+### GET <code>http://{baseURL}/polls/:pollId</code>
 
 Retorna dados de uma única enquete.
 
 #### Response body
-
 ```json
 {
   "poll": {
@@ -87,14 +90,31 @@ Retorna dados de uma única enquete.
 }
 ```
 
-### POST <code>/polls/:pollId/votes</code>
+### POST <code>http://{baseURL}/polls/:pollId/votes</code>
 
-Vota em uma enquete.
+Vota em uma enquete.</br>
+(Se usuário já havia votado nessa enquete, apaga o voto antigo e cria um voto novo.)
 
 #### Request body
-
 ```json
 {
   "pollOptionId": "780b8e25-a40e-4301-ab32-77ebf8c79da8"
+}
+```
+
+## Rotas WebSockets
+
+baseURL: <code>localhost:4000</code>
+
+### WS <code>ws://{baseURL}/polls/:pollId/results</code>
+
+Recebe essa mensagem a cada voto feito.</br>
+(Se usuário já havia votado nessa enquete, recebe também uma mensagem relativa a ID da opção antiga, e com o novo valor decrementado.)
+
+#### Message
+```json
+{
+  "pollOptionId": "780b8e25-a40e-4301-ab32-77ebf8c79da8",
+  "votes": 21
 }
 ```
